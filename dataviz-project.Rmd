@@ -1,0 +1,22 @@
+---
+title: "Assignment03"
+author: "Odiche Nwabuikwu"
+date: "2/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+```
+
+```{r load_data, message = FALSE}
+educ <- read_csv('data/educ.csv')
+```
+

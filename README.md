@@ -1,2 +1,2 @@
 # dataviz-project
-Data visualization project for Intorduction to Data Science class
+Data visualization project for Introduction to Data Science class

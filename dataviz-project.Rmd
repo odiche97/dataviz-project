@@ -97,3 +97,37 @@ ggplot(data = ftpt) +
 
 rm(ftpt)
 ```
+
+
+```{r viz_2, message = FALSE}
+# 2nd graph
+
+sex <- ed_data %>%
+  filter(year %in% c(2006:2010)) %>%
+  select(-`Full-time`, -enrollment_fall, -state_abbr, -lowincome_pct) %>%
+  pivot_longer(cols = c(-year, -unitid, -inst_name, -state_name),
+               names_to = "sex", values_to = "number_applied") %>%
+  filter(!is.na(number_applied)) %>%
+  distinct() %>%
+  filter(state_name %in% c("California"))
+
+# group by sex and year to make bar chart
+sex <- sex %>%
+  group_by(year, sex) %>%
+summarize(count_app = mean(number_applied))
+  
+
+ggplot(data = sex,
+       mapping = aes(fill = sex, y = count_app, x = factor(year))) +
+  geom_bar(position = "stack", stat="identity") +
+  scale_y_continuous(breaks = seq(0, 8000, 2000), lim = c(0, 7000)) +
+  labs(title = 
+        paste("UNDERGRADUATE APPLICATIONS TO CALIFORNIA",
+        "UNIVERISITIES FROM 2006-2010"),
+       subtitle = "Gender application patterns stay constant during the 2008 Financial Crisis",
+       caption = "Source: Urban Institute",
+       x = "Year",
+       y = "Number of Applications") 
+
+rm(sex)
+```

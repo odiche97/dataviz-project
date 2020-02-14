@@ -13,6 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(waffle)
+library(urbnthemes)
+set_urbn_defaults(style = "print")
+
 ```
 
 
@@ -65,13 +68,9 @@ ed_data <- left_join(ftpt, inst)
 ed_data <- full_join(ed_data, sex)
 ed_data <- full_join(ed_data, study)
 
+
 rm(ftpt, inst, sex, study)
 
-```
-
-```{r urb, include=FALSE}
-library(urbnthemes)
-set_urbn_defaults(style = "print")
 ```
 
 
@@ -94,7 +93,9 @@ ggplot(data = ftpt) +
        caption = "Source: Urban Institute",
        x = "Year",
        y = "Full-Time Rention Rates") 
+```
 
+```{r include=FALSE}
 rm(ftpt)
 ```
 
@@ -129,5 +130,39 @@ ggplot(data = sex,
        x = "Year",
        y = "Number of Applications") 
 
+```
+
+```{r include=FALSE}
 rm(sex)
+```
+
+```{r viz_3, message = FALSE}
+# 3rd graph
+
+study <- ed_data %>%
+  filter(!is.na(enrollment_fall),
+         year == 2007)
+  
+study %>%
+  group_by(state_name) %>%
+  summarize(enrol = sum(enrollment_fall)) %>%
+  ggplot(aes(fill = state_name, values = enrol)) +
+  geom_waffle(n_rows = 10, size = 1, colour = "white", 
+              flip = TRUE, make_proportional = TRUE) +
+  coord_equal() +
+  scale_fill_manual(name = "State", 
+                    values = c("#1696d2", "#fdbf11", "#55b748", "#000000", "#ec008b")) +
+  theme_void() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank()) +
+  labs(title = "2007 UNDERGRADUATE FALL ENROLLMENT",
+       subtitle = "Each square represents approximately 61,000 students",
+       caption = "Source: Urban Institute") 
+```
+
+
+```{r include=FALSE}
+rm(study)
 ```

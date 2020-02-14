@@ -166,3 +166,34 @@ study %>%
 ```{r include=FALSE}
 rm(study)
 ```
+
+```{r viz_4, message = FALSE}
+
+# 4th graph
+
+# inst
+inst <- ed_data %>%
+  filter(!is.na(lowincome_pct)) %>%
+  filter(!grepl("[a-z]", lowincome_pct)) %>%
+  mutate(lowincome_pct = as.numeric(lowincome_pct)) %>%
+  filter(year %in% c(2006:2009),
+         state_name %in% c('New York'))
+  
+ggplot(data = inst, 
+       mapping = aes(x = lowincome_pct, y = `Full-time`)) +
+    geom_point(color = "#000000", alpha = 0.4) +
+  facet_wrap(~year, ncol = 2) +
+  geom_smooth() +
+  scale_y_continuous(limits = c(0, 1),
+                     breaks = seq(0, 1, 0.25)) +
+  scale_x_continuous(limits = c(0, 1), 
+                     breaks = seq(0, 1, 0.25)) +
+  labs(title = 
+      paste("RELATIONSHIP BETWEEN STUDENT RETENTION RATES AND SHARE OF LOW-INCOME STUDENTS"),
+      ("IN NEW YORK UNIVERSITIES"),
+       subtitle = "Data shows a slight negative relationship between retention rates and low-income share",
+      caption = "Source: Urban Institute",
+      x = "Percentage of Low-Income Students",
+      y = "Full-time Retention Rates")
+
+```

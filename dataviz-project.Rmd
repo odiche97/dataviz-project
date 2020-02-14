@@ -74,7 +74,11 @@ rm(ftpt, inst, sex, study)
 ```
 
 
-```{r viz_1, message = FALSE}
+My dataset was obtained from the Urban Institute, and contains data on tertiary institutions in California, Texas, Pennsylvania, New York and Florida. I chose these states because of their high volume of tertiary institutions. I also chose to use data from 2003 to 2013 beause I was interested in the behavior of these tertiary institutions during the 2008 Financial Crisis.
+
+My first visualization is a line-plot showing the full-time student retention rates for U.S. tertiary institutions from 2003 to 2013. In particular, I wanted to examine how average retention rates changed after the 2008 Recession. Overall, the plot shows a decrease in retention rates for California, New York, Pennsylvania and Texas around 2007 to 2010. However, retention rates in Florida show an overall increase, which is unexpected. 
+
+```{r viz_1, message=FALSE}
 
 ## 1st graph
 
@@ -99,6 +103,7 @@ ggplot(data = ftpt) +
 rm(ftpt)
 ```
 
+My second visualization is a stacked bar chart showing the breakdown of male and female undergraduate applications to Californian universities. I was interested in seeing whether this distribution changed during the financial crisis. Overall, the graph shows a steady increase in applications. The share of men and women in each cohort also appears to be constant.
 
 ```{r viz_2, message = FALSE}
 # 2nd graph
@@ -136,6 +141,8 @@ ggplot(data = sex,
 rm(sex)
 ```
 
+My third visualization is a waffle chart showing the share of undergraduate enrollment for 2007. Californian schools appear to have the highest enrollment number by far.
+
 ```{r viz_3, message = FALSE}
 # 3rd graph
 
@@ -167,6 +174,10 @@ study %>%
 rm(study)
 ```
 
+
+My fourth visualization shows the relationship between full-time retention rates and the share of low income students on financial aid in New York universities. The data shows a slight negative relationship between retention rates and the share of low-income students. This data supports my reasoning that higher retention rates are associated with lower percentage of aid given to low-income students, because schools are paying more as a result of students  staying longer. I theorized that this negative relationship would become sharper during the financial crisis, but this does not appear to be the case.
+
+
 ```{r viz_4, message = FALSE}
 
 # 4th graph
@@ -193,7 +204,7 @@ ggplot(data = inst,
       ("IN NEW YORK UNIVERSITIES"),
        subtitle = "Data shows a slight negative relationship between retention rates and low-income share",
       caption = "Source: Urban Institute",
-      x = "Percentage of Low-Income Students",
+      x = "Percentage of Low-Income Students on Financial Aid",
       y = "Full-time Retention Rates")
 
 ```

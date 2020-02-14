@@ -9,14 +9,91 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r load_packages, include=FALSE}
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(tidyr)
+```{r load_package, message = FALSE}
+
+library(tidyverse)
+library(waffle)
 ```
 
-```{r load_data, message = FALSE}
-educ <- read_csv('data/educ.csv')
+
+```{r import_data, message = FALSE}
+
+sex <- read_csv('data/EducationDataPortal_02.07.2020_sex.csv')
+study <- read_csv('data/EducationDataPortal_02.07.2020_level_of_study.csv')
+inst <- read_csv('data/EducationDataPortal_02.13.2020_institutions.csv')
+ftpt <- read_csv('data/EducationDataPortal_02.12.2020_ftpt.csv')
 ```
 
+```{r clean_data, warning = FALSE, message = FALSE}
+
+# ftpt
+# reshape 
+ftpt <- pivot_wider(data = ftpt, names_from = ftpt, values_from = retention_rate)
+
+# remove missing values AND make states categorical vars
+ftpt <- ftpt %>%
+  filter(!is.na('state_name'), !is.na(`Full-time`), !is.na(`Part-time`)) %>%
+  mutate(state_name = factor(state_name, levels = c("California", "Florida", "New York",
+                                                    "Pennsylvania", "Texas"))) %>%
+  select(-`Part-time`, -Total)
+
+# sex
+sex <- sex %>%
+  filter(sex != 'Total') %>%
+  filter(!is.na(number_applied)) %>%
+  select(-number_admitted)
+
+# reshape - num applied
+sex <- pivot_wider(data = sex, names_from = sex, 
+                   values_from = number_applied)
+
+
+# study
+study <- study %>%
+  filter(!is.na(enrollment_fall),
+                level_of_study != 'Graduate') %>%
+  select(-level_of_study)
+
+# inst
+# remove character and missing values from percent variable
+inst <-inst %>%
+  filter(!grepl("[a-z]", inst$lowincome_pct)) %>%
+  filter(!is.na(lowincome_pct))
+
+# merge datasets
+ed_data <- left_join(ftpt, inst)
+ed_data <- full_join(ed_data, sex)
+ed_data <- full_join(ed_data, study)
+
+rm(ftpt, inst, sex, study)
+
+```
+
+```{r urb, include=FALSE}
+library(urbnthemes)
+set_urbn_defaults(style = "print")
+```
+
+
+```{r viz_1, message = FALSE}
+
+## 1st graph
+
+# collapse by state and year to get mean retention rates
+ftpt <- ed_data %>%
+  group_by(state_name, year) %>%
+  summarize(reten_full = mean(`Full-time`, na.rm = TRUE))
+
+# line graph
+ggplot(data = ftpt) +
+  geom_line(mapping = aes(x = year, y = `reten_full`, color = state_name)) +
+  geom_point(mapping = aes(x = year, y = `reten_full`, color = state_name), show.legend = FALSE) +
+  scale_x_continuous(breaks = seq(2003, 2013, 1), limits = c(2003, 2013)) +
+  labs(title = "AVERAGE RETENTION RATES AT U.S. TERTIARY INSTITUTIONS FROM 2003-2013",
+       subtitle = "States Show Varying Retention Rates After the 2008 Recession",
+       caption = "Source: Urban Institute",
+       x = "Year",
+       y = "Full-Time Rention Rates") 
+
+rm(ftpt)
+```
